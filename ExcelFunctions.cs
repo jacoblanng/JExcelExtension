@@ -195,6 +195,17 @@ public class ExcelFunctions
         sheetRange.Value2 = strings.toColumn();
     }
 
+    //Number version
+    public void insertColumnStrings(string[] strings, int x, int y)
+    {
+        localStringOne = ExcelExtension.getCoord(x, y);
+        localStringTwo = ExcelExtension.getCoord(x, y + strings.Length - 1);
+
+        sheetRange.setRange(localStringOne, localStringTwo);
+
+        sheetRange.Value2 = strings.toColumn();
+    }
+
     //Inserts a "strings" into an excel row of choosing. Will override used cells. Size depends on string length.
     //Range version
     public void insertRowStrings(string[] strings, Excel.Range range)
