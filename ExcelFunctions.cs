@@ -94,7 +94,7 @@ public class ExcelFunctions
     {
         //Makes the appropriate strings
         localStringOne = startColumn.intToColumnLettering() + row;
-        localStringTwo = startColumn.intToColumnLettering() + sheetRange.UsedColumnCount.ToString();
+        localStringTwo = (sheetRange.UsedColumnCount - 1).intToColumnLettering() + row;
 
         //Makes range based on the previous two strings
         sheetRange.setRange(localStringOne, localStringTwo);
@@ -126,7 +126,7 @@ public class ExcelFunctions
     {
         //Makes the appropriate strings
         localStringOne = 0.intToColumnLettering() + row;
-        localStringTwo = 0.intToColumnLettering() + sheetRange.UsedColumnCount.ToString();
+        localStringTwo = (sheetRange.UsedColumnCount - 1).intToColumnLettering() + row;
 
         //Makes range based on the previous two strings
         sheetRange.setRange(localStringOne, localStringTwo);
