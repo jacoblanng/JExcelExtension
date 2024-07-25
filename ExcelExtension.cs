@@ -13,6 +13,7 @@ public static class ExcelExtension
 
     public static string getCoord(int x, int y) => tool.getExcelCoord(x, y);
     public static string intToColumnLettering(this int value) => tool.getExcelColumnLetters(value);
+    public static string arrayToString(this string[] array, string seperator) => tool.arrayToString(array, seperator);
     public static string[] trim(this string[] array) => tool.trimArray(array);
     public static string[] summarize(this string[] array) => tool.summarizeArray(array);
     public static string[] splitArrayByString(this string[] array, string splitBy) => tool.splitArrayByString(array, splitBy);
