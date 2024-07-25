@@ -52,6 +52,21 @@ public class ExcelTools
         return getExcelColumnLetters(x) + y.ToString();
     }
 
+    //Function for turning array into one string with seperator
+    public string arrayToString(string[] array, string seperator)
+    {
+        string result = "";
+
+        result += array[0];
+        
+        for(int i = 1; i <= array.Length - 1; i++)
+        {
+            result += seperator + array[i];
+        }
+
+        return result;
+    }
+
     //Function that returns a string array made from two string arrays with the ability to add a string in between to seperate
     public string[] mergeArrays(string[] firstArray, string[] secondArray, string betweenString)
     {
