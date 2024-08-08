@@ -38,6 +38,9 @@ public class ExcelFunctions
         //Makes string array with the size of all cells in "range"
         string[] result = new string[sheetRange.Count];
 
+        if(sheetRange.UsedRowsCount <= startRow)
+            return result;
+
         //Loops through all cells in "range" and adds it to appropriate index in "result"
         localIntOne = -1;
         foreach (Excel.Range c in sheetRange.range)
