@@ -5,14 +5,15 @@ namespace JExcelExtension;
 //Functions for inputting and extracting data in an excel sheet
 public class ExcelFunctions
 {
-    //Resources for use in functions
-    private SheetRange sheetRange;
-
+    //Resources for use in class
     private string? localStringOne;
     private string? localStringTwo;
 
     private int localIntOne;
     private int localIntTwo;
+    
+    //Resources for use in and out of class
+    public SheetRange sheetRange;
 
     public ExcelFunctions(ref Excel.Worksheet sheetRef)
     {
