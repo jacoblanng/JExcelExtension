@@ -170,7 +170,11 @@ public class ExcelFunctions
         {
             if (c.Value2 != null)
             {
-                result[c.Column - 1, c.Row - 1] = c.Value2;
+                result[c.Column - 1, c.Row - 1] = c.Value2.ToString();
+            }
+            else if (c.Column <= sheetRange.UsedColumnCount && c.Row <= sheetRange.UsedRowsCount)
+            {
+                result[c.Column - 1, c.Row - 1] = "";
             }
         }
 
@@ -191,7 +195,11 @@ public class ExcelFunctions
         {
             if (c.Value2 != null)
             {
-                result[c.Column - 1, c.Row - 1] = c.Value2;
+                result[c.Column - 1, c.Row - 1] = c.Value2.ToString();
+            }
+            else if (c.Column <= sheetRange.UsedColumnCount && c.Row <= sheetRange.UsedRowsCount)
+            {
+                result[c.Column - 1, c.Row - 1] = "";
             }
         }
 
