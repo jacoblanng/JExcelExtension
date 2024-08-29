@@ -156,6 +156,48 @@ public class ExcelFunctions
         //Returns result
         return result;
     }
+    //Gets a string array of all values in between the selected points
+    public string[,] rangeToStrings(int startColumn, int startRow, int endColumn, int endRow)
+    {
+        localStringOne = startColumn.intToColumnLettering() + startRow.ToString();
+        localStringTwo = endColumn.intToColumnLettering() + endRow.ToString();
+
+        sheetRange.setRange(localStringOne, localStringTwo);
+
+        string[,] result = new string[sheetRange.UsedColumnCount, sheetRange.UsedRowsCount];
+
+        foreach (Excel.Range c in sheetRange.range)
+        {
+            if (c.Value2 != null)
+            {
+                result[c.Column - 1, c.Row - 1] = c.Value2;
+            }
+        }
+
+        return result;
+    }
+
+    //Gets string array from of the selected point to the end of the sheet
+    public string[,] rangeToStrings(int startColumn, int startRow)
+    {
+        localStringOne = startColumn.intToColumnLettering() + startRow.ToString();
+        localStringTwo = sheetRange.UsedColumnCount.intToColumnLettering() + sheetRange.UsedRowsCount.ToString();
+
+        sheetRange.setRange(localStringOne, localStringTwo);
+
+        string[,] result = new string[sheetRange.UsedColumnCount, sheetRange.UsedRowsCount];
+
+        foreach (Excel.Range c in sheetRange.range)
+        {
+            if (c.Value2 != null)
+            {
+                result[c.Column - 1, c.Row - 1] = c.Value2;
+            }
+        }
+
+        return result;
+    }
+
 
     //Inserts "insertString" at all rows specified by "insertAt" in "column"
     public void insertStringAt(int column, int[] insertAt, string insertString)
