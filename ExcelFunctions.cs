@@ -26,6 +26,41 @@ public class ExcelFunctions
         sheetRange.Free();
     }
 
+    //Gets a string array of a column from "startRow" to "endRow"
+    public string[] columnToStrings(int column, int startRow, int endRow)
+    {
+        //Makes the appropriate strings
+        localStringOne = column.intToColumnLettering() + startRow.ToString();
+        localStringTwo = column.intToColumnLettering() + endRow.ToString();
+
+        //Makes range based on the previous two strings
+        sheetRange.setRange(localStringOne, localStringTwo);
+
+        //Makes string array with the size of all cells in "range"
+        string[] result = new string[sheetRange.Count];
+
+        if (sheetRange.UsedRowsCount <= startRow)
+            return result;
+
+        //Loops through all cells in "range" and adds it to appropriate index in "result"
+        localIntOne = -1;
+        foreach (Excel.Range c in sheetRange.range)
+        {
+            localIntOne++;
+
+            if (c.Value2 == null)
+            {
+                result[localIntOne] = "";
+                continue;
+            }
+
+            result[localIntOne] = c.Value2.ToString();
+        }
+
+        //Returns result
+        return result;
+    }
+
     //Gets a string array of a whole selected column
     public string[] columnToStrings(int column, int startRow)
     {
@@ -67,6 +102,38 @@ public class ExcelFunctions
         //Makes the appropriate strings
         localStringOne = column.intToColumnLettering() + "1";
         localStringTwo = column.intToColumnLettering() + sheetRange.UsedRowsCount.ToString();
+
+        //Makes range based on the previous two strings
+        sheetRange.setRange(localStringOne, localStringTwo);
+
+        //Makes string array with the size of all cells in "range"
+        string[] result = new string[sheetRange.Count];
+
+        //Loops through all cells in "range" and adds it to appropriate index in "result"
+        localIntOne = -1;
+        foreach (Excel.Range c in sheetRange.range)
+        {
+            localIntOne++;
+
+            if (c.Value2 == null)
+            {
+                result[localIntOne] = "";
+                continue;
+            }
+
+            result[localIntOne] = c.Value2.ToString();
+        }
+
+        //Returns result
+        return result;
+    }
+
+    //Gets a string array of a row from "startColumn" to "endColumn"
+    public string[] rowToStrings(int row, int startColumn, int endColumn)
+    {
+        //Makes the appropriate strings
+        localStringOne = startColumn.intToColumnLettering() + row;
+        localStringTwo = endColumn.intToColumnLettering() + row;
 
         //Makes range based on the previous two strings
         sheetRange.setRange(localStringOne, localStringTwo);
