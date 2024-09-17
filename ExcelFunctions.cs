@@ -15,6 +15,7 @@ public class ExcelFunctions
     //Resources for use in and out of class
     public SheetRange sheetRange;
 
+    public ExcelFunctions() {}
     public ExcelFunctions(ref Excel.Worksheet sheetRef)
     {
         sheetRange = new SheetRange(ref sheetRef);
@@ -39,7 +40,7 @@ public class ExcelFunctions
         //Makes string array with the size of all cells in "range"
         string[] result = new string[sheetRange.Count];
 
-        if (sheetRange.UsedRowsCount <= startRow)
+        if (sheetRange.UsedRowsCount <= startRow - endRow)
             return result;
 
         //Loops through all cells in "range" and adds it to appropriate index in "result"
@@ -74,7 +75,7 @@ public class ExcelFunctions
         //Makes string array with the size of all cells in "range"
         string[] result = new string[sheetRange.Count];
 
-        if(sheetRange.UsedRowsCount <= startRow)
+        if(sheetRange.UsedRowsCount <= startRow - sheetRange.UsedRowsCount)
             return result;
 
         //Loops through all cells in "range" and adds it to appropriate index in "result"
