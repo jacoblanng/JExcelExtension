@@ -5,6 +5,7 @@ namespace JExcelExtension;
 //A custom struct to organize excel range and sheets to shorten code and simple
 public struct SheetRange
 {
+    public SheetRange() {}
     public SheetRange(ref Excel.Worksheet sheetRef)
     {
         sheet = sheetRef;
@@ -24,6 +25,12 @@ public struct SheetRange
             System.Runtime.InteropServices.Marshal.ReleaseComObject(range);
             range = null;
         }
+    }
+
+    public void import(ref Excel.Worksheet sheetRef)
+    {
+        sheet = sheetRef;
+        range = sheet.get_Range("a1");
     }
 
     public Excel.Range range;
