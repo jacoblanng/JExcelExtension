@@ -165,23 +165,29 @@ public class ExcelTools
         return result;
     }
 
-    //Trims an array by removing all consecutive white space strings at the end of the array ensuring a shorter array but no data lost
+    //Trims an array by removing all white space strings in array ensuring a shorter array but no data lost
     public string[] trimArray(string[] strings)
     {
         int amountToTrim = 0;
 
         for (int i = strings.Length - 1; i >= 0; i--)
         {
-            if (strings[i].Trim() != "")
-                break;
+            if(strings[i] != null)
+            if(strings[i].Trim() != "")
+                continue;
 
             amountToTrim++;
         }
 
         string[] result = new string[strings.Length - amountToTrim];
 
-        for (int i = 0; i <= result.Length - 1; i++)
+        for (int i = 0; i <= strings.Length - 1; i++)
         {
+            if(strings[i] == null)
+                continue;
+            if (strings[i].Trim() == "")
+                continue;
+
             result[i] = strings[i];
         }
 

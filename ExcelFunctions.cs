@@ -370,6 +370,18 @@ public class ExcelFunctions
 
     //Inserts a string array into multiple excel columns and rows of choosing. Will override used cells. Size depends on string length.
     //Range version
+    public void insertStrings(string[,] strings, int x, int y)
+    {
+        localStringOne = ExcelExtension.getCoord(x, y);
+        localStringTwo = ExcelExtension.getCoord(x + strings.GetLength(1) - 1, y + strings.GetLength(0) - 1);
+
+        sheetRange.setRange(localStringOne, localStringTwo);
+
+        sheetRange.Value2 = strings;
+    }
+
+    //Inserts a string array into multiple excel columns and rows of choosing. Will override used cells. Size depends on string length.
+    //Range version
     public void insertStrings(string[,] strings, Excel.Range range)
     {
         localIntOne = range.Column - 1;
