@@ -107,7 +107,7 @@ public class ExcelTools
         return result;
     }
 
-    //Splits a string array by splitting each string into multiple strings making the array longer
+    //Splits a string array by splitting each string into multiple strings making the array longer via singular string
     public string[] splitArrayByString(string[] array, string splitBy)
     {
         int x = array.Length - 1;
@@ -132,8 +132,66 @@ public class ExcelTools
         return result;
     }
 
-    //Splits a single dimension string array into a two dimension string array by splitting each string into multiple strings
+    //Splits a string array by splitting each string into multiple strings making the array longer via char array
+    public string[] splitArrayByChars(string[] array, char[] splitBy)
+    {
+        int x = array.Length - 1;
+
+        foreach (string s in array)
+            x += s.Split(splitBy).Length;
+
+        string[] result = new string[x + 1];
+
+        int i = 0;
+        foreach (string s in array)
+        {
+            string[] splitArrayByString = s.Split(splitBy);
+
+            foreach (string l in splitArrayByString)
+            {
+                result[i] = l;
+                i++;
+            }
+        }
+
+        return result;
+    }
+
+    //Splits a single dimension string array into a two dimension string array by splitting each string into multiple strings via singular string
     public string[,] splitArrayByStringTwo(string[] array, string splitBy)
+    {
+        int x = array.Length - 1;
+        int y = 0;
+
+        foreach (string s in array)
+        {
+            int amountOfSplits = s.Split(splitBy).Length;
+
+            if (amountOfSplits >= y)
+                y = amountOfSplits;
+        }
+
+        string[,] result = new string[x + 1, y];
+
+        for (int i = 0; i <= x; i++)
+        {
+            string[] splitString = array[i].Split(splitBy);
+
+
+            for (int l = 0; l < y; l++)
+            {
+                if (splitString.Length - 1 < l || splitString[l] == null)
+                    continue;
+
+                result[i, l] = splitString[l];
+            }
+        }
+
+        return result;
+    }
+
+    //Splits a single dimension string array into a two dimension string array by splitting each string into multiple strings via char array
+    public string[,] splitArrayByCharsTwo(string[] array, char[] splitBy)
     {
         int x = array.Length - 1;
         int y = 0;

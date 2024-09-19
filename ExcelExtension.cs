@@ -17,9 +17,11 @@ public static class ExcelExtension
     public static string[] trimArray(this string[] array) => tool.trimArray(array);
     public static string[] summarizeArray(this string[] array) => tool.summarizeArray(array);
     public static string[] splitArrayByString(this string[] array, string splitBy) => tool.splitArrayByString(array, splitBy);
+    public static string[] splitArrayByChars(this string[] array, char[] splitBy) => tool.splitArrayByChars(array, splitBy);
     public static string[] mergeWith(this string[] mergeInto, string[] mergeWith, string spacing) => tool.mergeArrays(mergeInto, mergeWith, spacing);
     public static string[] replaceString(this string[] array, string target, string newString) => tool.replaceString(array, target, newString);
     public static string[,] toColumn(this string[] array) => tool.arrayToColumnFormat(array);
     public static string[,] toRow(this string[] array) => tool.arrayToRowFormat(array);
     public static string[,] splitArrayByString2D(this string[] array, string splitBy) => tool.splitArrayByStringTwo(array, splitBy);
+    public static string[,] splitArrayByChars2D(this string[] array, char[] splitBy) => tool.splitArrayByCharsTwo(array, splitBy);
 }
