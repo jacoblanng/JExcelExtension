@@ -55,6 +55,13 @@ public class ExcelTools
     //Function for turning array into one string with seperator
     public string arrayToString(string[] array, string seperator)
     {
+        if (array.Length == 0)
+            return "";
+
+        if (array.Length <= 1)
+        if (array[0] == null || array[0] == "")
+            return "";
+
         string result = "";
 
         result += array[0];
@@ -239,14 +246,17 @@ public class ExcelTools
 
         string[] result = new string[strings.Length - amountToTrim];
 
-        for (int i = 0; i <= strings.Length - 1; i++)
+        int resultPos = 0;
+
+        for (int i = 0; i < strings.Length; i++)
         {
             if(strings[i] == null)
                 continue;
             if (strings[i].Trim() == "")
                 continue;
 
-            result[i] = strings[i];
+            result[resultPos] = strings[i];
+            resultPos++;
         }
 
         return result;
