@@ -370,6 +370,18 @@ public class ExcelFunctions
 
     //Inserts a string array into multiple excel columns and rows of choosing. Will override used cells. Size depends on string length.
     //Range version
+    public void insertStrings(string[,] strings, int x, int y)
+    {
+        localStringOne = ExcelExtension.getCoord(x, y);
+        localStringTwo = ExcelExtension.getCoord(x + strings.GetLength(1) - 1, y + strings.GetLength(0) - 1);
+
+        sheetRange.setRange(localStringOne, localStringTwo);
+
+        sheetRange.Value2 = strings;
+    }
+
+    //Inserts a string array into multiple excel columns and rows of choosing. Will override used cells. Size depends on string length.
+    //Range version
     public void insertStrings(string[,] strings, Excel.Range range)
     {
         localIntOne = range.Column - 1;
@@ -395,6 +407,66 @@ public class ExcelFunctions
         sheetRange.setRange(localStringOne, localStringTwo);
 
         sheetRange.Value2 = strings;
+    }
+
+    public void emptySheet()
+    {
+        localStringOne = ExcelExtension.getCoord(0, 1);
+        localStringTwo = ExcelExtension.getCoord(sheetRange.UsedColumnCount, sheetRange.UsedRowsCount);
+
+        sheetRange.setRange(localStringOne, localStringTwo);
+
+        sheetRange.Value2 = "";
+    }
+
+    public void emptySheet(int startColumn, int startRow)
+    {
+        localStringOne = ExcelExtension.getCoord(startColumn, startRow);
+        localStringTwo = ExcelExtension.getCoord(sheetRange.UsedColumnCount, sheetRange.UsedRowsCount);
+
+        sheetRange.setRange(localStringOne, localStringTwo);
+
+        sheetRange.Value2 = "";
+    }
+
+    public void emptyColumn(int column)
+    {
+        localStringOne = ExcelExtension.getCoord(column, 1);
+        localStringTwo = ExcelExtension.getCoord(column, sheetRange.UsedRowsCount);
+
+        sheetRange.setRange(localStringOne, localStringTwo);
+
+        sheetRange.Value2 = "";
+    }
+
+    public void emptyColumn(int column, int startRow)
+    {
+        localStringOne = ExcelExtension.getCoord(column, startRow);
+        localStringTwo = ExcelExtension.getCoord(column, sheetRange.UsedRowsCount);
+
+        sheetRange.setRange(localStringOne, localStringTwo);
+
+        sheetRange.Value2 = "";
+    }
+
+    public void emptyRow(int row)
+    {
+        localStringOne = ExcelExtension.getCoord(0, row);
+        localStringTwo = ExcelExtension.getCoord(sheetRange.UsedColumnCount, row);
+
+        sheetRange.setRange(localStringOne, localStringTwo);
+
+        sheetRange.Value2 = "";
+    }
+
+    public void emptyRow(int startColumn, int row)
+    {
+        localStringOne = ExcelExtension.getCoord(startColumn, row);
+        localStringTwo = ExcelExtension.getCoord(sheetRange.UsedColumnCount, row);
+
+        sheetRange.setRange(localStringOne, localStringTwo);
+
+        sheetRange.Value2 = "";
     }
 }
 

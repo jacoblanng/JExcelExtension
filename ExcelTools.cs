@@ -107,7 +107,7 @@ public class ExcelTools
         return result;
     }
 
-    //Splits a string array by splitting each string into multiple strings making the array longer
+    //Splits a string array by splitting each string into multiple strings making the array longer via singular string
     public string[] splitArrayByString(string[] array, string splitBy)
     {
         int x = array.Length - 1;
@@ -132,7 +132,32 @@ public class ExcelTools
         return result;
     }
 
-    //Splits a single dimension string array into a two dimension string array by splitting each string into multiple strings
+    //Splits a string array by splitting each string into multiple strings making the array longer via char array
+    public string[] splitArrayByChars(string[] array, char[] splitBy)
+    {
+        int x = array.Length - 1;
+
+        foreach (string s in array)
+            x += s.Split(splitBy).Length;
+
+        string[] result = new string[x + 1];
+
+        int i = 0;
+        foreach (string s in array)
+        {
+            string[] splitArrayByString = s.Split(splitBy);
+
+            foreach (string l in splitArrayByString)
+            {
+                result[i] = l;
+                i++;
+            }
+        }
+
+        return result;
+    }
+
+    //Splits a single dimension string array into a two dimension string array by splitting each string into multiple strings via singular string
     public string[,] splitArrayByStringTwo(string[] array, string splitBy)
     {
         int x = array.Length - 1;
@@ -165,23 +190,62 @@ public class ExcelTools
         return result;
     }
 
-    //Trims an array by removing all consecutive white space strings at the end of the array ensuring a shorter array but no data lost
+    //Splits a single dimension string array into a two dimension string array by splitting each string into multiple strings via char array
+    public string[,] splitArrayByCharsTwo(string[] array, char[] splitBy)
+    {
+        int x = array.Length - 1;
+        int y = 0;
+
+        foreach (string s in array)
+        {
+            int amountOfSplits = s.Split(splitBy).Length;
+
+            if (amountOfSplits >= y)
+                y = amountOfSplits;
+        }
+
+        string[,] result = new string[x + 1, y];
+
+        for (int i = 0; i <= x; i++)
+        {
+            string[] splitString = array[i].Split(splitBy);
+
+
+            for (int l = 0; l < y; l++)
+            {
+                if (splitString.Length - 1 < l || splitString[l] == null)
+                    continue;
+
+                result[i, l] = splitString[l];
+            }
+        }
+
+        return result;
+    }
+
+    //Trims an array by removing all white space strings in array ensuring a shorter array but no data lost
     public string[] trimArray(string[] strings)
     {
         int amountToTrim = 0;
 
         for (int i = strings.Length - 1; i >= 0; i--)
         {
-            if (strings[i].Trim() != "")
-                break;
+            if(strings[i] != null)
+            if(strings[i].Trim() != "")
+                continue;
 
             amountToTrim++;
         }
 
         string[] result = new string[strings.Length - amountToTrim];
 
-        for (int i = 0; i <= result.Length - 1; i++)
+        for (int i = 0; i <= strings.Length - 1; i++)
         {
+            if(strings[i] == null)
+                continue;
+            if (strings[i].Trim() == "")
+                continue;
+
             result[i] = strings[i];
         }
 
