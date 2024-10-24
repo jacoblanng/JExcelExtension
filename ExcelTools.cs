@@ -120,13 +120,21 @@ public class ExcelTools
         int x = array.Length - 1;
 
         foreach (string s in array)
+        {
+            if (s == null || s == "")
+                continue;
+
             x += s.Split(splitBy).Length;
+        }
 
         string[] result = new string[x + 1];
 
         int i = 0;
         foreach (string s in array)
         {
+            if (s == null || s == "")
+                continue;
+
             string[] splitArrayByString = s.Split(splitBy);
 
             foreach (string l in splitArrayByString)
@@ -145,13 +153,21 @@ public class ExcelTools
         int x = array.Length - 1;
 
         foreach (string s in array)
+        {
+            if (s == null || s == "")
+                continue;
+
             x += s.Split(splitBy).Length;
+        }
 
         string[] result = new string[x + 1];
 
         int i = 0;
         foreach (string s in array)
         {
+            if (s == null || s == "")
+                continue;
+
             string[] splitArrayByString = s.Split(splitBy);
 
             foreach (string l in splitArrayByString)
@@ -172,6 +188,9 @@ public class ExcelTools
 
         foreach (string s in array)
         {
+            if (s == null || s == "")
+                continue;
+
             int amountOfSplits = s.Split(splitBy).Length;
 
             if (amountOfSplits >= y)
@@ -205,6 +224,9 @@ public class ExcelTools
 
         foreach (string s in array)
         {
+            if(s == null || s == "")
+                continue;
+
             int amountOfSplits = s.Split(splitBy).Length;
 
             if (amountOfSplits >= y)
@@ -261,6 +283,7 @@ public class ExcelTools
 
         return result;
     }
+
     //Shortens a string array down to only the unique strings getting rid of duplicate strings
     public string[] summarizeArray(string[] strings)
     {
@@ -270,6 +293,7 @@ public class ExcelTools
 
         return result;
     }
+
     //Replaces all strings that matches the "targetString" with "newString" throughout the array
     public string[] replaceString(string[] array, string targetString, string newString)
     {
@@ -278,7 +302,32 @@ public class ExcelTools
         int i = 0;
         foreach (string s in array)
         {
+            if (s == null || s == "")
+            {
+                i++;
+                continue;
+            }
             result[i] = s.Replace(targetString, newString);
+
+            i++;
+        }
+
+        return result;
+    }
+
+    //Replaces all chars that matches the "targetChar" with "newChar" throughout the array
+    public string[] replaceChar(string[] array, char targetChar, char newChar)
+    {
+        string[] result = new string[array.Length];
+
+        int i = 0;
+        foreach (string s in array)
+        {
+            if (s == null || s == "") {
+                i++;
+                continue;
+            }
+            result[i] = s.Replace(targetChar, newChar);
 
             i++;
         }
@@ -294,7 +343,10 @@ public class ExcelTools
         int i = 0;
         foreach (string s in strings)
         {
-            result[i, 0] = s;
+            if (s == null || s == "")
+                result[i, 0] = "";
+            else
+                result[i, 0] = s;
 
             i++;
         }
@@ -310,7 +362,10 @@ public class ExcelTools
         int i = 0;
         foreach (string s in strings)
         {
-            result[0, i] = s;
+            if (s == null || s == "")
+                result[0, i] = "";
+            else
+                result[0, i] = s;
 
             i++;
         }

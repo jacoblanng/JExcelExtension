@@ -20,6 +20,7 @@ public static class ExcelExtension
     public static string[] splitArrayByChars(this string[] array, char[] splitBy) => tool.splitArrayByChars(array, splitBy);
     public static string[] mergeWith(this string[] mergeInto, string[] mergeWith, string spacing) => tool.mergeArrays(mergeInto, mergeWith, spacing);
     public static string[] replaceString(this string[] array, string target, string newString) => tool.replaceString(array, target, newString);
+    public static string[] replaceChar(this string[] array, char targetChar, char newChar) => tool.replaceChar(array, targetChar, newChar);
     public static string[,] toColumn(this string[] array) => tool.arrayToColumnFormat(array);
     public static string[,] toRow(this string[] array) => tool.arrayToRowFormat(array);
     public static string[,] splitArrayByString2D(this string[] array, string splitBy) => tool.splitArrayByStringTwo(array, splitBy);
