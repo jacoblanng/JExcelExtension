@@ -369,7 +369,7 @@ public class ExcelFunctions
     }
 
     //Inserts a string array into multiple excel columns and rows of choosing. Will override used cells. Size depends on string length.
-    //Range version
+    //Number version
     public void insertStrings(string[,] strings, int x, int y)
     {
         localStringOne = ExcelExtension.getCoord(x, y);
@@ -380,7 +380,6 @@ public class ExcelFunctions
         sheetRange.Value2 = strings;
     }
 
-    //Inserts a string array into multiple excel columns and rows of choosing. Will override used cells. Size depends on string length.
     //Range version
     public void insertStrings(string[,] strings, Excel.Range range)
     {
