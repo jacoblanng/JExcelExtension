@@ -27,6 +27,45 @@ public class ExcelFunctions
         sheetRange.Free();
     }
 
+
+    //Gets string from cell. If range will always take the first column and row
+    //Range version
+    public string cellToString(Excel.Range range)
+    {
+        localIntOne = range.Column - 1;
+        localIntTwo = range.Row;
+
+        localStringOne = ExcelExtension.getCoord(localIntOne, localIntTwo);
+
+        sheetRange.setRange(localStringOne);
+
+        return sheetRange.Value2;
+    }
+
+    //SheetRange version
+    public string cellToString(SheetRange _sheetRange)
+    {
+        localIntOne = _sheetRange.Column - 1;
+        localIntTwo = _sheetRange.Row;
+
+        localStringOne = ExcelExtension.getCoord(localIntOne, localIntTwo);
+
+        sheetRange.setRange(localStringOne);
+
+        return sheetRange.Value2;
+    }
+
+    //Number version
+    public string cellToString(int x, int y)
+    {
+        localStringOne = ExcelExtension.getCoord(x, y);
+
+        sheetRange.setRange(localStringOne);
+
+        return sheetRange.Value2;
+    }
+
+
     //Gets a string array of a column from "startRow" to "endRow"
     public string[] columnToStrings(int column, int startRow, int endRow)
     {
@@ -275,6 +314,53 @@ public class ExcelFunctions
     }
 
 
+    //Inserts string into specified cell 
+    //Range version
+    public void insertCellString(string str, Excel.Range range)
+    {
+        if (str == "" || str == null)
+            return;
+
+        localIntOne = range.Column - 1;
+        localIntTwo = range.Row;
+
+        localStringOne = ExcelExtension.getCoord(localIntOne, localIntTwo);
+
+        sheetRange.setRange(localStringOne);
+
+        sheetRange.Value2 = str;
+    }
+
+
+    //SheetRange version
+    public void insertCellString(string str, SheetRange _sheetRange)
+    {
+        if (str == "" || str == null)
+            return;
+
+        localIntOne = _sheetRange.Column - 1;
+        localIntTwo = _sheetRange.Row;
+
+        localStringOne = ExcelExtension.getCoord(localIntOne, localIntTwo);
+
+        sheetRange.setRange(localStringOne);
+
+        sheetRange.Value2 = str;
+    }
+
+    //Number version
+    public void insertCellString(string str, int x, int y)
+    {
+        if (str == "" || str == null)
+            return;
+
+        localStringOne = ExcelExtension.getCoord(x, y);
+
+        sheetRange.setRange(localStringOne);
+
+        sheetRange.Value2 = str;
+    }
+
     //Inserts "insertString" at all rows specified by "insertAt" in "column"
     public void insertStringAt(int column, int[] insertAt, string insertString)
     {
@@ -287,6 +373,7 @@ public class ExcelFunctions
             sheetRange.Value2 = insertString;
         }
     }
+
 
     //Inserts "strings" into an excel column of choosing. Will override used cells. Size depends on string length.
     //Range version
