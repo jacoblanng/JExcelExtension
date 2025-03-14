@@ -495,6 +495,79 @@ public class ExcelFunctions
         sheetRange.Value2 = strings;
     }
 
+    //Colors the specified cell. If range will always take first column and row. Uses Excel color index
+    //Range version
+    public void colorCell(int colorIndex, Excel.Range range)
+    {
+        localIntOne = range.Column - 1;
+        localIntTwo = range.Row;
+
+        localStringOne = ExcelExtension.getCoord(localIntOne, localIntTwo);
+
+        sheetRange.setRange(localStringOne);
+
+        sheetRange.range.Interior.ColorIndex = colorIndex;
+    }
+
+    //SheetRange version
+    public void colorCell(int colorIndex, SheetRange _sheetRange)
+    {
+        localIntOne = _sheetRange.Column - 1;
+        localIntTwo = _sheetRange.Row;
+
+        localStringOne = ExcelExtension.getCoord(localIntOne, localIntTwo);
+
+        sheetRange.setRange(localStringOne);
+
+        sheetRange.range.Interior.ColorIndex = colorIndex;
+    }
+
+    //Number version
+    public void colorCell(int colorIndex, int x, int y)
+    {
+        localStringOne = ExcelExtension.getCoord(x, y);
+
+        sheetRange.setRange(localStringOne);
+
+        sheetRange.range.Interior.ColorIndex = colorIndex;
+    }
+
+
+    //Colors the specified range. Uses Excel color index
+    //Range version
+    public void colorRange(int colorIndex, Excel.Range range)
+    {
+        localStringOne = ExcelExtension.getCoord(range.Column - 1, range.Row);
+        localStringTwo = ExcelExtension.getCoord(range.Columns.Count - 1, range.Rows.Count);
+
+        sheetRange.setRange(localStringOne, localStringTwo);
+
+        sheetRange.range.Interior.ColorIndex = colorIndex;
+    }
+
+    //SheetRange version
+    public void colorRange(int colorIndex, SheetRange _sheetRange)
+    {
+        localStringOne = ExcelExtension.getCoord(_sheetRange.Column - 1, _sheetRange.Row);
+        localStringTwo = ExcelExtension.getCoord(_sheetRange.UsedColumnCount - 1, _sheetRange.UsedRowsCount);
+
+        sheetRange.setRange(localStringOne, localStringTwo);
+
+        sheetRange.range.Interior.ColorIndex = colorIndex;
+    }
+
+    //Number version
+    public void colorRange(int colorIndex, int x1, int y1, int x2, int y2)
+    {
+        localStringOne = ExcelExtension.getCoord(x1, y1);
+        localStringTwo = ExcelExtension.getCoord(x2, y2);
+
+        sheetRange.setRange(localStringOne, localStringTwo);
+
+        sheetRange.range.Interior.ColorIndex = colorIndex;
+    }
+
+
     public void emptySheet()
     {
         localStringOne = ExcelExtension.getCoord(0, 1);
