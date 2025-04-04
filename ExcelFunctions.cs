@@ -39,7 +39,10 @@ public class ExcelFunctions
 
         sheetRange.setRange(localStringOne);
 
-        return sheetRange.Value2;
+        if (sheetRange.Value2 == null)
+            return "";
+
+        return sheetRange.Value2.ToString();
     }
 
     //SheetRange version
@@ -52,7 +55,10 @@ public class ExcelFunctions
 
         sheetRange.setRange(localStringOne);
 
-        return sheetRange.Value2;
+        if (sheetRange.Value2 == null)
+            return "";
+
+        return sheetRange.Value2.ToString();
     }
 
     //Number version
@@ -62,7 +68,10 @@ public class ExcelFunctions
 
         sheetRange.setRange(localStringOne);
 
-        return sheetRange.Value2;
+        if (sheetRange.Value2 == null)
+            return "";
+
+        return sheetRange.Value2.ToString();
     }
 
 
@@ -104,6 +113,9 @@ public class ExcelFunctions
     //Gets a string array of a whole selected column
     public string[] columnToStrings(int column, int startRow)
     {
+        if (startRow > sheetRange.UsedRowsCount)
+            return new string[0];
+
         //Makes the appropriate strings
         localStringOne = column.intToColumnLettering() + startRow.ToString();
         localStringTwo = column.intToColumnLettering() + sheetRange.UsedRowsCount.ToString();
@@ -203,6 +215,9 @@ public class ExcelFunctions
     //Gets a string array of a whole selected row
     public string[] rowToStrings(int row, int startColumn)
     {
+        if (startColumn > sheetRange.UsedColumnCount)
+            return new string[0];
+
         //Makes the appropriate strings
         localStringOne = startColumn.intToColumnLettering() + row;
         localStringTwo = (sheetRange.UsedColumnCount - 1).intToColumnLettering() + row;
@@ -291,6 +306,12 @@ public class ExcelFunctions
     //Gets string array from of the selected point to the end of the sheet
     public string[,] rangeToStrings(int startColumn, int startRow)
     {
+        if (startRow > sheetRange.UsedRowsCount)
+            return new string[0,0];
+
+        if (startColumn > sheetRange.UsedColumnCount)
+            return new string[0,0];
+
         localStringOne = startColumn.intToColumnLettering() + startRow.ToString();
         localStringTwo = sheetRange.UsedColumnCount.intToColumnLettering() + sheetRange.UsedRowsCount.ToString();
 
@@ -576,6 +597,7 @@ public class ExcelFunctions
         sheetRange.setRange(localStringOne, localStringTwo);
 
         sheetRange.Value2 = "";
+        colorRange(0, sheetRange);
     }
 
     public void emptySheet(int startColumn, int startRow)
