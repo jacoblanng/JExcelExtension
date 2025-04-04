@@ -6,18 +6,18 @@ public class ExcelTools
     //Easy to use array of the english alphabet that is used for columns in excel. Starts at 0. Ends at 24.
     private readonly string[] letterMap =
     {
-        "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "X", "Y", "Z"
+        "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"
     };
 
-    //Function for getting the first or two letters of a column based on int up to a max of 649
+    //Function for getting the first or two letters of a column based on int up to a max of 701. Cannot get coloumns past "ZZ"
     public string getExcelColumnLetters(int column)
     {
-        //Prevents numbers too large to be handled
-        if (column >= 650)
+        //Prevents numbers too large to be handled. 
+        if (column >= 702)
             return "";
 
         //If more than one letter is needed
-        if (column >= 25)
+        if (column >= 26)
         {
             string letterColumn = "";
 
@@ -25,14 +25,14 @@ public class ExcelTools
             int lastLetter = column;
 
             //Letter to check how many times input can go through "letterMap"
-            for (int i = column; i >= 25; i -= 25)
+            for (int i = column; i >= 26; i -= 26)
             {
                 loopAmount++;
-                lastLetter -= 25;
+                lastLetter -= 26;
             }
 
             //First letter is based on how many times the previous loop went through "letterMap"
-            if (loopAmount <= 24)
+            if (loopAmount <= 25)
                 letterColumn = letterColumn + letterMap[loopAmount];
             //Adds last letter normally if it isn't less than zero
             if (lastLetter >= 0)
@@ -237,8 +237,10 @@ public class ExcelTools
 
         for (int i = 0; i <= x; i++)
         {
-            string[] splitString = array[i].Split(splitBy);
+            if (array[i] == "" || array[i] == null)
+                continue;
 
+            string[] splitString = array[i].Split(splitBy);
 
             for (int l = 0; l < y; l++)
             {
