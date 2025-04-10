@@ -36,6 +36,10 @@ public struct SheetRange
     public Excel.Range range;
     public Excel.Worksheet sheet;
 
+    public void setRange(Excel.Range _range)
+    {
+        range = sheet.get_Range(_range);
+    }
     public void setRange(int aX, int aY)
     {
         range = sheet.get_Range(ExcelExtension.getCoord(aX, aY));

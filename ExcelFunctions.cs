@@ -1,4 +1,6 @@
-﻿using Excel = Microsoft.Office.Interop.Excel;
+﻿using System.Data.Common;
+using System.Numerics;
+using Excel = Microsoft.Office.Interop.Excel;
 
 namespace JExcelExtension;
 
@@ -21,16 +23,35 @@ public class ExcelFunctions
         sheetRange = new SheetRange(ref sheetRef);
     }
 
+    //
     //THIS FUNCTION IS REQUIRED TO BE RUN AFTER YOU ARE FINISHED WITH "ExcelFunctions" OTHERWISE EXCEL PROCESS WON'T CLOSE
+    //
     public void Free()
     {
         sheetRange.Free();
     }
 
+    //
+    //REPEATED FUNCTIONS
+    //
 
-    //Gets string from cell. If range will always take the first column and row
-    //Range version
-    public string cellToString(Excel.Range range)
+    void setRange(Excel.Range range)
+    {
+        sheetRange.setRange(range);
+    }
+    void setRange(SheetRange sheetRange)
+    {
+        sheetRange.setRange(sheetRange.range);
+    }
+    void setRange(int x1, int y1, int x2, int y2)
+    {
+        localStringOne = x1.intToColumnLettering() + y1.ToString();
+        localStringTwo = x2.intToColumnLettering() + y2.ToString();
+
+        sheetRange.setRange(localStringOne, localStringTwo);
+    }
+
+    void setRangeSingular(Excel.Range range)
     {
         localIntOne = range.Column - 1;
         localIntTwo = range.Row;
@@ -38,6 +59,107 @@ public class ExcelFunctions
         localStringOne = ExcelExtension.getCoord(localIntOne, localIntTwo);
 
         sheetRange.setRange(localStringOne);
+    }
+    void setRangeSingular(SheetRange sheetRange)
+    {
+        localIntOne = sheetRange.Column - 1;
+        localIntTwo = sheetRange.Row;
+
+        localStringOne = ExcelExtension.getCoord(localIntOne, localIntTwo);
+
+        sheetRange.setRange(localStringOne);
+    }
+    void setRangeSingular(int x, int y)
+    {
+        localStringOne = ExcelExtension.getCoord(x, y);
+
+        sheetRange.setRange(localStringOne);
+    }
+
+    //
+    //END OF REPEATED FUNCTIONS
+    //
+
+    //
+    //THESE FUNCTIONS ARE PURELY EXPERIMENTAL
+    //
+
+    //Gets a cell value and converts it to the specified type
+    //Range version
+    public T cellToType<T>(Excel.Range range)
+    {
+        setRangeSingular(range);
+
+        if (sheetRange.Value2 == null)
+            return default(T);
+
+        T result = Convert.ChangeType(sheetRange.Value2, typeof(T));
+
+        return result;
+    }
+    //SheetRange version
+    public T cellToType<T>(SheetRange _sheetRange)
+    {
+        setRangeSingular(_sheetRange);
+
+        if (sheetRange.Value2 == null)
+            return default;
+
+        T result = Convert.ChangeType(sheetRange.Value2, typeof(T));
+
+        return result;
+    }
+    //Number version
+    public T cellToType<T>(int x, int y)
+    {
+        setRangeSingular(x, y);
+
+        if (sheetRange.Value2 == null)
+            return default;
+
+        T result = Convert.ChangeType(sheetRange.Value2, typeof(T));
+
+        return result;
+    }
+
+    public void insertCellType<T> (T value, Excel.Range range)
+    {
+        setRangeSingular(range);
+
+        if (value == null)
+            return;
+
+        sheetRange.Value2 = value;
+    }
+
+    public void insertCellType<T>(T value, SheetRange _sheetRange)
+    {
+        setRangeSingular(_sheetRange);
+
+        if (value == null)
+            return;
+
+        sheetRange.Value2 = value;
+    }
+    public void insertCellType<T>(T value, int x, int y)
+    {
+        setRangeSingular(x, y);
+
+        if (value == null)
+            return;
+
+        sheetRange.Value2 = value;
+    }
+
+    //
+    //END OF EXPERIMENTAL FUNCTIONS
+    //
+
+    //Gets string from cell. If range will always take the first column and row
+    //Range version
+    public string cellToString(Excel.Range range)
+    {
+        setRangeSingular(range);
 
         if (sheetRange.Value2 == null)
             return "";
@@ -48,12 +170,7 @@ public class ExcelFunctions
     //SheetRange version
     public string cellToString(SheetRange _sheetRange)
     {
-        localIntOne = _sheetRange.Column - 1;
-        localIntTwo = _sheetRange.Row;
-
-        localStringOne = ExcelExtension.getCoord(localIntOne, localIntTwo);
-
-        sheetRange.setRange(localStringOne);
+        setRangeSingular(_sheetRange);
 
         if (sheetRange.Value2 == null)
             return "";
@@ -64,9 +181,7 @@ public class ExcelFunctions
     //Number version
     public string cellToString(int x, int y)
     {
-        localStringOne = ExcelExtension.getCoord(x, y);
-
-        sheetRange.setRange(localStringOne);
+        setRangeSingular(x, y);
 
         if (sheetRange.Value2 == null)
             return "";
@@ -514,6 +629,82 @@ public class ExcelFunctions
         sheetRange.setRange(localStringOne, localStringTwo);
 
         sheetRange.Value2 = strings;
+    }
+
+    //Checks if the specified cell is empty. If range will always take first column and row
+    //Range version
+    public bool isCellEmpty(Excel.Range range)
+    {
+        setRangeSingular(range);
+
+        if (sheetRange.Value2 == null)
+            return true;
+        return false;
+    }
+    //SheetRange version
+    public bool isCellEmpty(SheetRange _sheetRange)
+    {
+        setRangeSingular(_sheetRange);
+
+        if (sheetRange.Value2 == null)
+            return true;
+        return false;
+    }
+    //Number version
+    public bool isCellEmpty(int x, int y)
+    {
+        setRangeSingular(x, y);
+
+        if (sheetRange.Value2 == null)
+            return true;
+        return false;
+    }
+
+    //Checks if the specified range is empty
+    //Range version
+    public bool isRangeEmpty(Excel.Range range)
+    {
+        setRange(range);
+
+        foreach(Excel.Range c in sheetRange.range)
+        {
+            if (c.Value2 != null)
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
+    //SheetRange version
+    public bool isRangeEmpty(SheetRange _sheetRange)
+    {
+        setRange(_sheetRange);
+
+        foreach (Excel.Range c in sheetRange.range)
+        {
+            if (c.Value2 != null)
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
+    //Number version
+    public bool isRangeEmpty(int x1, int y1, int x2, int y2)
+    {
+        setRange(x1, y1, x2, y2);
+
+        foreach (Excel.Range c in sheetRange.range)
+        {
+            if (c.Value2 != null)
+            {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     //Colors the specified cell. If range will always take first column and row. Uses Excel color index
