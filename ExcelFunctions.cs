@@ -23,7 +23,7 @@ public class ExcelFunctions
         sheetRange = new SheetRange(ref sheetRef);
     }
 
-    //
+    //WARNING
     //THIS FUNCTION IS REQUIRED TO BE RUN AFTER YOU ARE FINISHED WITH "ExcelFunctions" OTHERWISE EXCEL PROCESS WON'T CLOSE
     //
     public void Free()
@@ -35,60 +35,39 @@ public class ExcelFunctions
     //REPEATED FUNCTIONS
     //
 
-    void setRange(Excel.Range range)
-    {
-        sheetRange.setRange(range);
-    }
-    void setRange(SheetRange sheetRange)
-    {
-        sheetRange.setRange(sheetRange.range);
-    }
-    void setRange(int x1, int y1, int x2, int y2)
-    {
-        localStringOne = x1.intToColumnLettering() + y1.ToString();
-        localStringTwo = x2.intToColumnLettering() + y2.ToString();
+    //Loops through all cells in "range" and adds it to appropriate index in "result"
+    private void getRangeTypes<T> (ref T[] array) {
+        int i = 0;
+        foreach (Excel.Range c in sheetRange.range)
+        {
+            if (c.Value2 != null)
+                array[i] = Convert.ChangeType(c.Value2, typeof(T));
 
-        sheetRange.setRange(localStringOne, localStringTwo);
+            i++;
+        }
     }
 
-    void setRangeSingular(Excel.Range range)
+    //Loops through all cells in "range" and adds it to appropriate index in "result" but for 2D arrays
+    private void getRangeTypes<T>(ref T[,] array)
     {
-        localIntOne = range.Column - 1;
-        localIntTwo = range.Row;
+        foreach (Excel.Range c in sheetRange.range)
+        {
+            if (c.Value2 == null)
+                continue;
 
-        localStringOne = ExcelExtension.getCoord(localIntOne, localIntTwo);
-
-        sheetRange.setRange(localStringOne);
-    }
-    void setRangeSingular(SheetRange sheetRange)
-    {
-        localIntOne = sheetRange.Column - 1;
-        localIntTwo = sheetRange.Row;
-
-        localStringOne = ExcelExtension.getCoord(localIntOne, localIntTwo);
-
-        sheetRange.setRange(localStringOne);
-    }
-    void setRangeSingular(int x, int y)
-    {
-        localStringOne = ExcelExtension.getCoord(x, y);
-
-        sheetRange.setRange(localStringOne);
+            array[c.Column - 1, c.Row - 1] = Convert.ChangeType(c.Value2, typeof(T));
+        }
     }
 
-    //
     //END OF REPEATED FUNCTIONS
-    //
-
-    //
-    //THESE FUNCTIONS ARE PURELY EXPERIMENTAL
-    //
+    //THESE FUNCTIONS HERE AFTER WILL LATER BECOME RECOMMENDED AND STABLE FUNCTIONS
+    //EXPERIMENTAL FUNCTIONS HERE AFTER
 
     //Gets a cell value and converts it to the specified type
     //Range version
-    public T cellToType<T>(Excel.Range range)
+    public T cellToType<T>(Excel.Range _range)
     {
-        setRangeSingular(range);
+        sheetRange.setRange(_range);
 
         if (sheetRange.Value2 == null)
             return default(T);
@@ -100,7 +79,7 @@ public class ExcelFunctions
     //SheetRange version
     public T cellToType<T>(SheetRange _sheetRange)
     {
-        setRangeSingular(_sheetRange);
+        sheetRange.setRange(_sheetRange);
 
         if (sheetRange.Value2 == null)
             return default;
@@ -112,7 +91,7 @@ public class ExcelFunctions
     //Number version
     public T cellToType<T>(int x, int y)
     {
-        setRangeSingular(x, y);
+        sheetRange.setRange(x, y);
 
         if (sheetRange.Value2 == null)
             return default;
@@ -122,28 +101,200 @@ public class ExcelFunctions
         return result;
     }
 
-    public void insertCellType<T> (T value, Excel.Range range)
+    //Gets a type array of a column from "startRow" to "endRow"
+    public T[] columnToTypes<T>(int column, int startRow, int endRow)
     {
-        setRangeSingular(range);
+        //Checks if range would be valid
+        if (endRow <= startRow)
+            return new T[0];
+
+        if (startRow > sheetRange.UsedRowCount)
+            return new T[0];
+
+        //Sets range
+        sheetRange.setRange(column, startRow, column, endRow);
+
+        //Makes type array with the size of all cells in "range"
+        T[] result = new T[sheetRange.Count];
+
+        if (sheetRange.UsedRowCount <= startRow - endRow)
+            return result;
+
+        //Gets all values in range and transfers them to result
+        getRangeTypes(ref result);
+
+        return result;
+    }
+
+    //Gets a type array of a whole selected column from "startRow"
+    public T[] columnToTypes<T>(int column, int startRow)
+    {
+        //Checks if range would be valid
+        if (startRow > sheetRange.UsedRowCount)
+            return new T[0];
+
+        //Sets range
+        sheetRange.setRange(column, startRow, column, sheetRange.UsedRowCount);
+
+        //Makes type array with the size of all cells in "range"
+        T[] result = new T[sheetRange.Count];
+
+        //Gets all values in range and transfers them to result
+        getRangeTypes(ref result);
+
+        return result;
+    }
+
+    //Gets a type array of a whole selected column with all rows
+    public T[] columnToTypes<T>(int column)
+    {
+        //Sets range
+        sheetRange.setRange(column, 1, column, sheetRange.UsedRowCount);
+
+        //Makes type array with the size of all cells in "range"
+        T[] result = new T[sheetRange.Count];
+
+        //Gets all values in range and transfers them to result
+        getRangeTypes(ref result);
+
+        return result;
+    }
+
+
+    //Gets a type array of a row from "startColumn" to "endColumn"
+    public T[] rowToTypes<T>(int row, int startColumn, int endColumn)
+    {
+       //Checks if range would be valid
+        if (endColumn <= startColumn)
+            return new T[0];
+        if (startColumn > sheetRange.UsedColumnCount)
+            return new T[0];
+
+        //Sets range
+        sheetRange.setRange(startColumn, row, endColumn, row);
+
+        //Makes type array with the size of all cells in "range"
+        T[] result = new T[sheetRange.Count];
+
+        //Gets all values in range and transfers them to result
+        getRangeTypes(ref result);
+
+        return result;
+    }
+
+    //Gets a string array of a whole selected row from "startColumn"
+    public T[] rowToTypes<T>(int row, int startColumn)
+    {
+        //Checks if range would be valid
+        if (startColumn > sheetRange.UsedColumnCount)
+            return new T[0];
+
+        //Sets range
+        sheetRange.setRange(startColumn, row, sheetRange.UsedColumnCount, row);
+
+        //Makes type array with the size of all cells in "range"
+        T[] result = new T[sheetRange.Count];
+
+        //Gets all values in range and transfers them to result
+        getRangeTypes(ref result);
+
+        return result;
+    }
+    //Gets a type array of a whole selected row with all columns
+    public T[] rowToTypes<T>(int row)
+    {
+        //Sets range
+        sheetRange.setRange(0, row, sheetRange.UsedColumnCount, row);
+
+        //Makes type array with the size of all cells in "range"
+        T[] result = new T[sheetRange.Count];
+
+        //Gets all values in range and transfers them to result
+        getRangeTypes(ref result);
+
+        return result;
+    }
+
+    //Gets a type array of all values in between the selected points
+    public T[,] rangeToTypes<T>(int startColumn, int startRow, int endColumn, int endRow)
+    {
+        //Checks if range would be valid
+        if (endRow <= startRow)
+            return new T[0, 0];
+        if(endColumn <= startColumn)
+            return new T[0, 0];
+
+        //Sets range
+        sheetRange.setRange(startColumn, startRow, endColumn, endRow);
+
+        //Makes type array with the size of all cells in "range"
+        T[,] result = new T[endColumn - startColumn, endRow - startRow];
+
+        //Gets all values in range and transfers them to result
+        getRangeTypes(ref result);
+
+        return result;
+    }
+
+    //Gets type array from of the selected point to the end of the sheet
+    public T[,] rangeToTypes<T>(int startColumn, int startRow)
+    {
+        //Checks if range would be valid
+        if (startRow > sheetRange.UsedRowCount)
+            return new T[0, 0];
+        if (startColumn > sheetRange.UsedColumnCount)
+            return new T[0, 0];
+
+        //Sets range
+        sheetRange.setRange(startColumn, startRow, sheetRange.UsedColumnCount, sheetRange.UsedRowCount);
+
+        T[,] result = new T[sheetRange.UsedColumnCount - startColumn, sheetRange.UsedRowCount - startRow];
+
+        //Gets all values in range and transfers them to result
+        getRangeTypes(ref result);
+
+        return result;
+    }
+
+    //Gets string array from the whole sheet
+    public T[,] rangeToTypes<T>()
+    {
+        //Sets range
+        sheetRange.setRange(0, 1, sheetRange.UsedColumnCount, sheetRange.UsedRowCount);
+
+        T[,] result = new T[sheetRange.UsedColumnCount, sheetRange.UsedRowCount];
+
+        //Gets all values in range and transfers them to result
+        getRangeTypes(ref result);
+
+        return result;
+    }
+
+    //Inserts value into specified cell 
+    //Range version
+    public void insertCellType<T> (T value, Excel.Range _range)
+    {
+        sheetRange.setRange(_range);
 
         if (value == null)
             return;
 
         sheetRange.Value2 = value;
     }
-
+    //SheetRange version
     public void insertCellType<T>(T value, SheetRange _sheetRange)
     {
-        setRangeSingular(_sheetRange);
+        sheetRange.setRange(_sheetRange);
 
         if (value == null)
             return;
 
         sheetRange.Value2 = value;
     }
+    //Number version
     public void insertCellType<T>(T value, int x, int y)
     {
-        setRangeSingular(x, y);
+        sheetRange.setRange(x, y);
 
         if (value == null)
             return;
@@ -151,15 +302,104 @@ public class ExcelFunctions
         sheetRange.Value2 = value;
     }
 
-    //
+    //Inserts "insertType" at all rows specified by "insertAt" in specified column
+    public void insertTypeAt<T>(int column, int[] insertAt, T insertType)
+    {
+        if(insertType == null)
+            return;
+
+        foreach (int i in insertAt)
+        {
+            sheetRange.setRange(column, i);
+
+            sheetRange.Value2 = insertType;
+        }
+    }
+
+    //Inserts "types" into an excel column of choosing. Size depends on array length.
+    //Range version
+    public void insertColumnTypes<T>(T[] types, Excel.Range _range)
+    {
+        sheetRange.setRange(_range);
+
+        sheetRange.Value2 = types.toTypeColumn();
+    }
+
+    //SheetRange version
+    public void insertColumnTypes<T>(T[] types, SheetRange _sheetRange)
+    {
+        sheetRange.setRange(_sheetRange);
+
+        sheetRange.Value2 = types.toTypeColumn();
+    }
+
+    //Number version
+    public void insertColumnTypes<T>(T[] types, int x, int y)
+    {
+        sheetRange.setRange(x, y, x, y + types.Length - 1);
+
+        sheetRange.Value2 = types.toTypeColumn();
+    }
+
+    //Inserts a "types" into an excel row of choosing. Size depends on array length.
+    //Range version
+    public void insertRowTypes<T>(T[] types, Excel.Range _range)
+    {
+        sheetRange.setRange(_range);
+
+        sheetRange.Value2 = types.toTypeRow();
+    }
+
+    //SheetRange version
+    public void insertRowTypes<T>(T[] types, SheetRange _sheetRange)
+    {
+        sheetRange.setRange(_sheetRange);
+
+        sheetRange.Value2 = types.toTypeRow();
+    }
+
+    //Number version
+    public void insertRowTypes<T>(T[] types, int x, int y)
+    {
+        sheetRange.setRange(x, y, x + types.Length - 1, y);
+
+        sheetRange.Value2 = types.toTypeRow();
+    }
+
+    //Inserts a 2D array of types straight into specified position in excel
+    //Number version
+    public void insertTypes<T>(T[,] types, int x, int y)
+    {
+        sheetRange.setRange(x, y, x + types.GetLength(1) - 1, y + types.GetLength(0) - 1);
+
+        sheetRange.Value2 = types;
+    }
+
+    //Range version
+    public void insertTypes<T>(T[,] types, Excel.Range _range)
+    {
+        sheetRange.setRange(_range.Column - 1, _range.Row, _range.Column - 1 + types.GetLength(1) - 1, _range.Row + types.GetLength(0) - 1);
+
+        sheetRange.Value2 = types;
+    }
+
+    //SheetRange version
+    public void insertTypes<T>(T[,] types, SheetRange _sheetRange)
+    {
+        sheetRange.setRange(_sheetRange.Column - 1, _sheetRange.Row, _sheetRange.Column - 1 + types.GetLength(1) - 1, _sheetRange.Row + types.GetLength(0) - 1);
+
+        sheetRange.Value2 = types;
+    }
+
     //END OF EXPERIMENTAL FUNCTIONS
-    //
+    //EVERYTHING HERE AFTER WILL LATER BE MOVED TO A LEGACY CLASS
+    //STABLE AND RECOMMENDED FUNCTIONS HERE AFTER
 
     //Gets string from cell. If range will always take the first column and row
     //Range version
-    public string cellToString(Excel.Range range)
+    public string cellToString(Excel.Range _range)
     {
-        setRangeSingular(range);
+        sheetRange.setRange(_range);
 
         if (sheetRange.Value2 == null)
             return "";
@@ -170,7 +410,7 @@ public class ExcelFunctions
     //SheetRange version
     public string cellToString(SheetRange _sheetRange)
     {
-        setRangeSingular(_sheetRange);
+        sheetRange.setRange(_sheetRange);
 
         if (sheetRange.Value2 == null)
             return "";
@@ -181,7 +421,7 @@ public class ExcelFunctions
     //Number version
     public string cellToString(int x, int y)
     {
-        setRangeSingular(x, y);
+        sheetRange.setRange(x, y);
 
         if (sheetRange.Value2 == null)
             return "";
@@ -203,7 +443,7 @@ public class ExcelFunctions
         //Makes string array with the size of all cells in "range"
         string[] result = new string[sheetRange.Count];
 
-        if (sheetRange.UsedRowsCount <= startRow - endRow)
+        if (sheetRange.UsedRowCount <= startRow - endRow)
             return result;
 
         //Loops through all cells in "range" and adds it to appropriate index in "result"
@@ -228,12 +468,12 @@ public class ExcelFunctions
     //Gets a string array of a whole selected column
     public string[] columnToStrings(int column, int startRow)
     {
-        if (startRow > sheetRange.UsedRowsCount)
+        if (startRow > sheetRange.UsedRowCount)
             return new string[0];
 
         //Makes the appropriate strings
         localStringOne = column.intToColumnLettering() + startRow.ToString();
-        localStringTwo = column.intToColumnLettering() + sheetRange.UsedRowsCount.ToString();
+        localStringTwo = column.intToColumnLettering() + sheetRange.UsedRowCount.ToString();
 
         //Makes range based on the previous two strings
         sheetRange.setRange(localStringOne, localStringTwo);
@@ -241,7 +481,7 @@ public class ExcelFunctions
         //Makes string array with the size of all cells in "range"
         string[] result = new string[sheetRange.Count];
 
-        if(sheetRange.UsedRowsCount <= startRow - sheetRange.UsedRowsCount)
+        if(sheetRange.UsedRowCount <= startRow - sheetRange.UsedRowCount)
             return result;
 
         //Loops through all cells in "range" and adds it to appropriate index in "result"
@@ -268,7 +508,7 @@ public class ExcelFunctions
     {
         //Makes the appropriate strings
         localStringOne = column.intToColumnLettering() + "1";
-        localStringTwo = column.intToColumnLettering() + sheetRange.UsedRowsCount.ToString();
+        localStringTwo = column.intToColumnLettering() + sheetRange.UsedRowCount.ToString();
 
         //Makes range based on the previous two strings
         sheetRange.setRange(localStringOne, localStringTwo);
@@ -401,7 +641,7 @@ public class ExcelFunctions
 
         sheetRange.setRange(localStringOne, localStringTwo);
 
-        string[,] result = new string[sheetRange.UsedColumnCount, sheetRange.UsedRowsCount];
+        string[,] result = new string[sheetRange.UsedColumnCount, sheetRange.UsedRowCount];
 
         foreach (Excel.Range c in sheetRange.range)
         {
@@ -409,7 +649,7 @@ public class ExcelFunctions
             {
                 result[c.Column - 1, c.Row - 1] = c.Value2.ToString();
             }
-            else if (c.Column <= sheetRange.UsedColumnCount && c.Row <= sheetRange.UsedRowsCount)
+            else if (c.Column <= sheetRange.UsedColumnCount && c.Row <= sheetRange.UsedRowCount)
             {
                 result[c.Column - 1, c.Row - 1] = "";
             }
@@ -421,18 +661,18 @@ public class ExcelFunctions
     //Gets string array from of the selected point to the end of the sheet
     public string[,] rangeToStrings(int startColumn, int startRow)
     {
-        if (startRow > sheetRange.UsedRowsCount)
+        if (startRow > sheetRange.UsedRowCount)
             return new string[0,0];
 
         if (startColumn > sheetRange.UsedColumnCount)
             return new string[0,0];
 
         localStringOne = startColumn.intToColumnLettering() + startRow.ToString();
-        localStringTwo = sheetRange.UsedColumnCount.intToColumnLettering() + sheetRange.UsedRowsCount.ToString();
+        localStringTwo = sheetRange.UsedColumnCount.intToColumnLettering() + sheetRange.UsedRowCount.ToString();
 
         sheetRange.setRange(localStringOne, localStringTwo);
 
-        string[,] result = new string[sheetRange.UsedColumnCount, sheetRange.UsedRowsCount];
+        string[,] result = new string[sheetRange.UsedColumnCount, sheetRange.UsedRowCount];
 
         foreach (Excel.Range c in sheetRange.range)
         {
@@ -440,7 +680,7 @@ public class ExcelFunctions
             {
                 result[c.Column - 1, c.Row - 1] = c.Value2.ToString();
             }
-            else if (c.Column <= sheetRange.UsedColumnCount && c.Row <= sheetRange.UsedRowsCount)
+            else if (c.Column <= sheetRange.UsedColumnCount && c.Row <= sheetRange.UsedRowCount)
             {
                 result[c.Column - 1, c.Row - 1] = "";
             }
@@ -449,16 +689,40 @@ public class ExcelFunctions
         return result;
     }
 
+    //Gets string array from the whole sheet
+    public string[,] rangeToStrings()
+    {
+        localStringOne = 0.intToColumnLettering() + "1";
+        localStringTwo = sheetRange.UsedColumnCount.intToColumnLettering() + sheetRange.UsedRowCount.ToString();
+
+        sheetRange.setRange(localStringOne, localStringTwo);
+
+        string[,] result = new string[sheetRange.UsedColumnCount, sheetRange.UsedRowCount];
+
+        foreach (Excel.Range c in sheetRange.range)
+        {
+            if (c.Value2 != null)
+            {
+                result[c.Column - 1, c.Row - 1] = c.Value2.ToString();
+            }
+            else if (c.Column <= sheetRange.UsedColumnCount && c.Row <= sheetRange.UsedRowCount)
+            {
+                result[c.Column - 1, c.Row - 1] = "";
+            }
+        }
+
+        return result;
+    }
 
     //Inserts string into specified cell 
     //Range version
-    public void insertCellString(string str, Excel.Range range)
+    public void insertCellString(string str, Excel.Range _range)
     {
         if (str == "" || str == null)
             return;
 
-        localIntOne = range.Column - 1;
-        localIntTwo = range.Row;
+        localIntOne = _range.Column - 1;
+        localIntTwo = _range.Row;
 
         localStringOne = ExcelExtension.getCoord(localIntOne, localIntTwo);
 
@@ -513,17 +777,17 @@ public class ExcelFunctions
 
     //Inserts "strings" into an excel column of choosing. Will override used cells. Size depends on string length.
     //Range version
-    public void insertColumnStrings(string[] strings, Excel.Range range)
+    public void insertColumnStrings(string[] strings, Excel.Range _range)
     {
-        localIntOne = range.Column - 1;
-        localIntTwo = range.Row;
+        localIntOne = _range.Column - 1;
+        localIntTwo = _range.Row;
 
         localStringOne = ExcelExtension.getCoord(localIntOne, localIntTwo);
         localStringTwo = ExcelExtension.getCoord(localIntOne, localIntTwo + strings.Length - 1);
 
         sheetRange.setRange(localStringOne, localStringTwo);
 
-        sheetRange.Value2 = strings.toColumn();
+        sheetRange.Value2 = strings.toStringColumn();
     }
 
     //SheetRange version
@@ -537,7 +801,7 @@ public class ExcelFunctions
 
         sheetRange.setRange(localStringOne, localStringTwo);
 
-        sheetRange.Value2 = strings.toColumn();
+        sheetRange.Value2 = strings.toStringColumn();
     }
 
     //Number version
@@ -548,22 +812,22 @@ public class ExcelFunctions
 
         sheetRange.setRange(localStringOne, localStringTwo);
 
-        sheetRange.Value2 = strings.toColumn();
+        sheetRange.Value2 = strings.toStringColumn();
     }
 
     //Inserts a "strings" into an excel row of choosing. Will override used cells. Size depends on string length.
     //Range version
-    public void insertRowStrings(string[] strings, Excel.Range range)
+    public void insertRowStrings(string[] strings, Excel.Range _range)
     {
-        localIntOne = range.Column - 1;
-        localIntTwo = range.Row;
+        localIntOne = _range.Column - 1;
+        localIntTwo = _range.Row;
 
         localStringOne = ExcelExtension.getCoord(localIntOne, localIntTwo);
         localStringTwo = ExcelExtension.getCoord(localIntOne + strings.Length - 1, localIntTwo);
 
         sheetRange.setRange(localStringOne, localStringTwo);
 
-        sheetRange.Value2 = strings.toRow();
+        sheetRange.Value2 = strings.toStringRow();
     }
 
     //SheetRange version
@@ -577,7 +841,7 @@ public class ExcelFunctions
 
         sheetRange.setRange(localStringOne, localStringTwo);
 
-        sheetRange.Value2 = strings.toRow();
+        sheetRange.Value2 = strings.toStringRow();
     }
 
     //Number version
@@ -588,7 +852,7 @@ public class ExcelFunctions
 
         sheetRange.setRange(localStringOne, localStringTwo);
 
-        sheetRange.Value2 = strings.toRow();
+        sheetRange.Value2 = strings.toStringRow();
     }
 
     //Inserts a string array into multiple excel columns and rows of choosing. Will override used cells. Size depends on string length.
@@ -604,10 +868,10 @@ public class ExcelFunctions
     }
 
     //Range version
-    public void insertStrings(string[,] strings, Excel.Range range)
+    public void insertStrings(string[,] strings, Excel.Range _range)
     {
-        localIntOne = range.Column - 1;
-        localIntTwo = range.Row;
+        localIntOne = _range.Column - 1;
+        localIntTwo = _range.Row;
 
         localStringOne = ExcelExtension.getCoord(localIntOne, localIntTwo);
         localStringTwo = ExcelExtension.getCoord(localIntOne + strings.GetLength(1) - 1, localIntTwo + strings.GetLength(0) - 1);
@@ -631,11 +895,15 @@ public class ExcelFunctions
         sheetRange.Value2 = strings;
     }
 
+    //END OF STABLE FUNCTIONS
+    //ANYTHING HERE AFTER WILL NOT BE MOVED TO LEGACY BUT WILL BE UPDATED OR ADDED ON TO
+    //FUNCTIONS HERE AFTER ARE MISCELLANEOUS FUNCTIONS
+
     //Checks if the specified cell is empty. If range will always take first column and row
     //Range version
-    public bool isCellEmpty(Excel.Range range)
+    public bool isCellEmpty(Excel.Range _range)
     {
-        setRangeSingular(range);
+        sheetRange.setRange(_range);
 
         if (sheetRange.Value2 == null)
             return true;
@@ -644,7 +912,7 @@ public class ExcelFunctions
     //SheetRange version
     public bool isCellEmpty(SheetRange _sheetRange)
     {
-        setRangeSingular(_sheetRange);
+        sheetRange.setRange(_sheetRange);
 
         if (sheetRange.Value2 == null)
             return true;
@@ -653,7 +921,7 @@ public class ExcelFunctions
     //Number version
     public bool isCellEmpty(int x, int y)
     {
-        setRangeSingular(x, y);
+        sheetRange.setRange(x, y);
 
         if (sheetRange.Value2 == null)
             return true;
@@ -664,7 +932,7 @@ public class ExcelFunctions
     //Range version
     public bool isRangeEmpty(Excel.Range range)
     {
-        setRange(range);
+        sheetRange.setRange(range);
 
         foreach(Excel.Range c in sheetRange.range)
         {
@@ -679,7 +947,7 @@ public class ExcelFunctions
     //SheetRange version
     public bool isRangeEmpty(SheetRange _sheetRange)
     {
-        setRange(_sheetRange);
+        sheetRange.setRange(_sheetRange);
 
         foreach (Excel.Range c in sheetRange.range)
         {
@@ -694,7 +962,7 @@ public class ExcelFunctions
     //Number version
     public bool isRangeEmpty(int x1, int y1, int x2, int y2)
     {
-        setRange(x1, y1, x2, y2);
+        sheetRange.setRange(x1, y1, x2, y2);
 
         foreach (Excel.Range c in sheetRange.range)
         {
@@ -709,134 +977,109 @@ public class ExcelFunctions
 
     //Colors the specified cell. If range will always take first column and row. Uses Excel color index
     //Range version
-    public void colorCell(int colorIndex, Excel.Range range)
+    public void colorCell(int colorIndex, Excel.Range _range)
     {
-        localIntOne = range.Column - 1;
-        localIntTwo = range.Row;
+        sheetRange.setRange(_range);
 
-        localStringOne = ExcelExtension.getCoord(localIntOne, localIntTwo);
-
-        sheetRange.setRange(localStringOne);
-
-        sheetRange.range.Interior.ColorIndex = colorIndex;
+        sheetRange.ColorIndex = colorIndex;
     }
 
     //SheetRange version
     public void colorCell(int colorIndex, SheetRange _sheetRange)
     {
-        localIntOne = _sheetRange.Column - 1;
-        localIntTwo = _sheetRange.Row;
+        sheetRange.setRange(_sheetRange);
 
-        localStringOne = ExcelExtension.getCoord(localIntOne, localIntTwo);
-
-        sheetRange.setRange(localStringOne);
-
-        sheetRange.range.Interior.ColorIndex = colorIndex;
+        sheetRange.ColorIndex = colorIndex;
     }
 
     //Number version
     public void colorCell(int colorIndex, int x, int y)
     {
-        localStringOne = ExcelExtension.getCoord(x, y);
+        sheetRange.setRange(x, y);
 
-        sheetRange.setRange(localStringOne);
-
-        sheetRange.range.Interior.ColorIndex = colorIndex;
+        sheetRange.ColorIndex = colorIndex;
     }
-
+    //Range previously set version
+    public void colorCell(int colorIndex)
+    {
+        sheetRange.ColorIndex = colorIndex;
+    }
 
     //Colors the specified range. Uses Excel color index
     //Range version
-    public void colorRange(int colorIndex, Excel.Range range)
+    public void colorRange(int colorIndex, Excel.Range _range)
     {
-        localStringOne = ExcelExtension.getCoord(range.Column - 1, range.Row);
-        localStringTwo = ExcelExtension.getCoord(range.Columns.Count - 1, range.Rows.Count);
+        sheetRange.setRange(_range);
 
-        sheetRange.setRange(localStringOne, localStringTwo);
-
-        sheetRange.range.Interior.ColorIndex = colorIndex;
+        sheetRange.ColorIndex = colorIndex;
     }
 
     //SheetRange version
     public void colorRange(int colorIndex, SheetRange _sheetRange)
     {
-        localStringOne = ExcelExtension.getCoord(_sheetRange.Column - 1, _sheetRange.Row);
-        localStringTwo = ExcelExtension.getCoord(_sheetRange.UsedColumnCount - 1, _sheetRange.UsedRowsCount);
+        sheetRange.setRange(_sheetRange);
 
-        sheetRange.setRange(localStringOne, localStringTwo);
-
-        sheetRange.range.Interior.ColorIndex = colorIndex;
+        sheetRange.ColorIndex = colorIndex;
     }
 
     //Number version
     public void colorRange(int colorIndex, int x1, int y1, int x2, int y2)
     {
-        localStringOne = ExcelExtension.getCoord(x1, y1);
-        localStringTwo = ExcelExtension.getCoord(x2, y2);
+        sheetRange.setRange(x1, y1, x2, y2);
 
-        sheetRange.setRange(localStringOne, localStringTwo);
-
-        sheetRange.range.Interior.ColorIndex = colorIndex;
+        sheetRange.ColorIndex = colorIndex;
+    }
+    //Range previously set version
+    public void colorRange(int colorIndex)
+    {
+        sheetRange.ColorIndex = colorIndex;
     }
 
-
-    public void emptySheet()
+    //Clears sheet
+    //Whole sheet
+    public void clearSheet()
     {
-        localStringOne = ExcelExtension.getCoord(0, 1);
-        localStringTwo = ExcelExtension.getCoord(sheetRange.UsedColumnCount, sheetRange.UsedRowsCount);
-
-        sheetRange.setRange(localStringOne, localStringTwo);
+        sheetRange.setRange(0, 1, sheetRange.UsedColumnCount, sheetRange.UsedRowCount);
 
         sheetRange.Value2 = "";
-        colorRange(0, sheetRange);
+        colorRange(0);
     }
-
-    public void emptySheet(int startColumn, int startRow)
+    //Clears sheet from start "startColumn" and "startRow", anything before these will not be cleared.
+    public void clearSheet(int startColumn, int startRow)
     {
-        localStringOne = ExcelExtension.getCoord(startColumn, startRow);
-        localStringTwo = ExcelExtension.getCoord(sheetRange.UsedColumnCount, sheetRange.UsedRowsCount);
-
-        sheetRange.setRange(localStringOne, localStringTwo);
+        sheetRange.setRange(startColumn, startRow, sheetRange.UsedColumnCount, sheetRange.UsedRowCount);
 
         sheetRange.Value2 = "";
+        colorRange(0);
     }
 
+    //Empties column of values
+    //Whole column
     public void emptyColumn(int column)
     {
-        localStringOne = ExcelExtension.getCoord(column, 1);
-        localStringTwo = ExcelExtension.getCoord(column, sheetRange.UsedRowsCount);
-
-        sheetRange.setRange(localStringOne, localStringTwo);
+        sheetRange.setRange(column, 1, column, sheetRange.UsedRowCount);
 
         sheetRange.Value2 = "";
     }
-
+    //Empties column from "startRow", anything before this will not be cleared.
     public void emptyColumn(int column, int startRow)
     {
-        localStringOne = ExcelExtension.getCoord(column, startRow);
-        localStringTwo = ExcelExtension.getCoord(column, sheetRange.UsedRowsCount);
-
-        sheetRange.setRange(localStringOne, localStringTwo);
+        sheetRange.setRange(column, startRow, column, sheetRange.UsedRowCount);
 
         sheetRange.Value2 = "";
     }
-
+    //Empties row of values
+    //Whole row
     public void emptyRow(int row)
     {
-        localStringOne = ExcelExtension.getCoord(0, row);
-        localStringTwo = ExcelExtension.getCoord(sheetRange.UsedColumnCount, row);
-
-        sheetRange.setRange(localStringOne, localStringTwo);
+        sheetRange.setRange(0, row, sheetRange.UsedColumnCount, row);
 
         sheetRange.Value2 = "";
     }
-
+    //Empties row from start "startColumn", anything before this will not be cleared.
     public void emptyRow(int startColumn, int row)
     {
-        localStringOne = ExcelExtension.getCoord(startColumn, row);
-        localStringTwo = ExcelExtension.getCoord(sheetRange.UsedColumnCount, row);
-
-        sheetRange.setRange(localStringOne, localStringTwo);
+        sheetRange.setRange(startColumn, row, sheetRange.UsedColumnCount, row);
 
         sheetRange.Value2 = "";
     }

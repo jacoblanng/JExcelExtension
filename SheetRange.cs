@@ -40,6 +40,10 @@ public struct SheetRange
     {
         range = sheet.get_Range(_range);
     }
+    public void setRange(SheetRange _sheetRange)
+    {
+        range = sheet.get_Range(_sheetRange.range);
+    }
     public void setRange(int aX, int aY)
     {
         range = sheet.get_Range(ExcelExtension.getCoord(aX, aY));
@@ -61,9 +65,14 @@ public struct SheetRange
         get => range.Value2;
         set => range.Value2 = value;
     }
+    public dynamic ColorIndex
+    {
+        get => range.Interior.ColorIndex;
+        set => range.Interior.ColorIndex = value;
+    }
     public int Count => range.Count;
     public int Column => range.Column;
     public int Row => range.Row;
-    public int UsedRowsCount => sheet.UsedRange.Rows.Count;
+    public int UsedRowCount => sheet.UsedRange.Rows.Count;
     public int UsedColumnCount => sheet.UsedRange.Columns.Count;
 }
