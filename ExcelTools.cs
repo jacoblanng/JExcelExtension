@@ -1,4 +1,6 @@
-﻿namespace JExcelExtension;
+﻿using Microsoft.VisualBasic;
+
+namespace JExcelExtension;
 
 //This class contains a functions that does not require excel but is good for converting and translating data for excel use
 public class ExcelTools
@@ -337,17 +339,15 @@ public class ExcelTools
         return result;
     }
 
-    //Turns a normal one dimensional array into an array that is fit for inserting into excel columns
-    public string[,] arrayToColumnFormat(string[] strings)
+    //Turns a normal one dimensional array of types into a type array that is fit for inserting into excel columns
+    public T[,] typesToColumnFormat<T>(T[] types)
     {
-        string[,] result = new string[strings.Length, 1];
+        T[,] result = new T[types.Length, 1];
 
         int i = 0;
-        foreach (string s in strings)
+        foreach (T s in types)
         {
-            if (s == null || s == "")
-                result[i, 0] = "";
-            else
+            if (s != null)
                 result[i, 0] = s;
 
             i++;
@@ -356,17 +356,49 @@ public class ExcelTools
         return result;
     }
 
-    //Turns a normal one dimensional array into an array that is fit for inserting into excel rows
-    public string[,] arrayToRowFormat(string[] strings)
+    //Turns a normal one dimensional string array into a string array that is fit for inserting into excel columns
+    public string[,] stringsToColumnFormat(string[] strings)
+    {
+        string[,] result = new string[strings.Length, 1];
+
+        int i = 0;
+        foreach (string s in strings)
+        {
+            if (s != null && s != "")
+                result[i, 0] = s;
+
+            i++;
+        }
+
+        return result;
+    }
+
+    //Turns a normal one dimensional type array into a type array that is fit for inserting into excel rows
+    public T[,] typesToRowFormat<T>(T[] types)
+    {
+        T[,] result = new T[1, types.Length];
+
+        int i = 0;
+        foreach (T s in types)
+        {
+            if (s != null)
+                result[i, 0] = s;
+
+            i++;
+        }
+
+        return result;
+    }
+
+    //Turns a normal one dimensional string array into a string array that is fit for inserting into excel rows
+    public string[,] stringsToRowFormat(string[] strings)
     {
         string[,] result = new string[1, strings.Length];
 
         int i = 0;
         foreach (string s in strings)
         {
-            if (s == null || s == "")
-                result[0, i] = "";
-            else
+            if (s != null && s != "")
                 result[0, i] = s;
 
             i++;
