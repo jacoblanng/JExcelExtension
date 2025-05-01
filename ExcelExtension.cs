@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace JExcelExtension;
+﻿namespace JExcelExtension;
 
 //This class contains static versions of ExcelTools
 public static class ExcelExtension

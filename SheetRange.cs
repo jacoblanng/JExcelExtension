@@ -17,12 +17,12 @@ public struct SheetRange
     {
         if (sheet != null)
         {
-            System.Runtime.InteropServices.Marshal.ReleaseComObject(sheet);
+            //System.Runtime.InteropServices.Marshal.ReleaseComObject(sheet);
             sheet = null;
         }
         if(range != null)
         {
-            System.Runtime.InteropServices.Marshal.ReleaseComObject(range);
+            //System.Runtime.InteropServices.Marshal.ReleaseComObject(range);
             range = null;
         }
     }
@@ -60,11 +60,14 @@ public struct SheetRange
     {
         range = sheet.get_Range(x, y);
     }
+
+    //WARNING DO NOT SET THIS VARIABLE TO A DECIMAL TYPE AS THAT WILL ALWAYS TRHOW AN ERROR
     public dynamic Value2
     {
         get => range.Value2;
         set => range.Value2 = value;
     }
+
     public dynamic ColorIndex
     {
         get => range.Interior.ColorIndex;

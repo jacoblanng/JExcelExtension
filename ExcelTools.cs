@@ -1,6 +1,4 @@
-﻿using Microsoft.VisualBasic;
-
-namespace JExcelExtension;
+﻿namespace JExcelExtension;
 
 //This class contains a functions that does not require excel but is good for converting and translating data for excel use
 public class ExcelTools
@@ -289,11 +287,11 @@ public class ExcelTools
     }
 
     //Shortens a string array down to only the unique strings getting rid of duplicate strings
-    public string[] summarizeArray(string[] strings)
+    public T[] summarizeArray<T>(T[] types)
     {
-        string[] result = new string[strings.Distinct().Count()];
+        T[] result = new T[types.Distinct().Count()];
 
-        result = strings.Distinct().ToArray();
+        result = types.Distinct().ToArray();
 
         return result;
     }
@@ -344,18 +342,16 @@ public class ExcelTools
     {
         T[,] result = new T[types.Length, 1];
 
-        int i = 0;
-        foreach (T s in types)
+        for(int i = 0; i < types.Length; i++)
         {
-            if (s != null)
-                result[i, 0] = s;
-
-            i++;
+            if(types[i] != null)
+                result[i, 0] = types[i];
         }
 
         return result;
     }
 
+    //Only used for LegacyFunctions
     //Turns a normal one dimensional string array into a string array that is fit for inserting into excel columns
     public string[,] stringsToColumnFormat(string[] strings)
     {
@@ -378,18 +374,16 @@ public class ExcelTools
     {
         T[,] result = new T[1, types.Length];
 
-        int i = 0;
-        foreach (T s in types)
+        for(int i = 0; i < types.Length; i++)
         {
-            if (s != null)
-                result[i, 0] = s;
-
-            i++;
+            if (types[i] != null)
+                result[0, i] = types[i];
         }
 
         return result;
     }
 
+    //Only used for LegacyFunctions
     //Turns a normal one dimensional string array into a string array that is fit for inserting into excel rows
     public string[,] stringsToRowFormat(string[] strings)
     {
