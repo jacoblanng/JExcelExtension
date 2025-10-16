@@ -2,6 +2,16 @@
 
 namespace JExcelExtension;
 
+//ADDED
+//"mergeArraysParallel" function. Merges two arrays in parallel
+//"mergeArraysParallel" variant. Merges a single dimensional array onto a two demensional array in parallel
+
+//FIXES
+//Fixed converting null to type causing error
+//
+//CHANGES
+//More null to type error prevention
+
 //Functions for inputting and extracting data in an excel sheet
 public class ExcelFunctions
 {
@@ -31,9 +41,14 @@ public class ExcelFunctions
         int i = 0;
         foreach (Excel.Range c in sheetRange.range)
         {
-            if (c.Value2 != null)
-                array[i] = Convert.ChangeType(c.Value2, typeof(T));
+            if (c.Value2 == null)
+                continue;
 
+            try
+            {
+                array[i] = (T)Convert.ChangeType(c.Value2, typeof(T));
+            }
+            catch { }
             i++;
         }
     }
@@ -46,7 +61,10 @@ public class ExcelFunctions
             if (c.Value2 == null)
                 continue;
 
-            array[c.Column - 1, c.Row - 1] = Convert.ChangeType(c.Value2, typeof(T));
+            try
+            {
+                array[c.Column - 1, c.Row - 1] = (T)Convert.ChangeType(c.Value2, typeof(T));
+            } catch {}
         }
     }
 
@@ -63,8 +81,13 @@ public class ExcelFunctions
         if (sheetRange.Value2 == null)
             return default;
 
-        T result = Convert.ChangeType(sheetRange.Value2, typeof(T));
-
+        try
+        {
+            T result = Convert.ChangeType(sheetRange.Value2, typeof(T));
+        } catch 
+        {
+            return default;
+        }
         return result;
     }
     //SheetRange version
@@ -75,7 +98,14 @@ public class ExcelFunctions
         if (sheetRange.Value2 == null)
             return default;
 
-        T result = Convert.ChangeType(sheetRange.Value2, typeof(T));
+        try
+        {
+            T result = Convert.ChangeType(sheetRange.Value2, typeof(T));
+        }
+        catch
+        {
+            return default;
+        }
 
         return result;
     }
@@ -87,7 +117,14 @@ public class ExcelFunctions
         if (sheetRange.Value2 == null)
             return default;
 
-        T result = Convert.ChangeType(sheetRange.Value2, typeof(T));
+        try
+        {
+            T result = Convert.ChangeType(sheetRange.Value2, typeof(T));
+        }
+        catch
+        {
+            return default;
+        }
 
         return result;
     }
