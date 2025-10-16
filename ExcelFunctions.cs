@@ -83,12 +83,11 @@ public class ExcelFunctions
 
         try
         {
-            T result = Convert.ChangeType(sheetRange.Value2, typeof(T));
+            return Convert.ChangeType(sheetRange.Value2, typeof(T));
         } catch 
         {
             return default;
         }
-        return result;
     }
     //SheetRange version
     public T cellToType<T>(SheetRange _sheetRange)
@@ -100,14 +99,12 @@ public class ExcelFunctions
 
         try
         {
-            T result = Convert.ChangeType(sheetRange.Value2, typeof(T));
+            return Convert.ChangeType(sheetRange.Value2, typeof(T));
         }
         catch
         {
             return default;
         }
-
-        return result;
     }
     //Number version
     public T cellToType<T>(int x, int y)
@@ -119,14 +116,12 @@ public class ExcelFunctions
 
         try
         {
-            T result = Convert.ChangeType(sheetRange.Value2, typeof(T));
+            return Convert.ChangeType(sheetRange.Value2, typeof(T));
         }
         catch
         {
             return default;
         }
-
-        return result;
     }
 
     //Gets a type array of a column from "startRow" to "endRow"

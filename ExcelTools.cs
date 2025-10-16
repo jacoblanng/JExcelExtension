@@ -115,7 +115,7 @@ public class ExcelTools
     }
 
     //Function that merges two arrays in parallel into a two dimensional array
-    public T[,] mergeArraysParallel(T[] firstArray, T[] secondArray)
+    public T[,] mergeArraysParallel<T>(T[] firstArray, T[] secondArray)
     {
         if(firstArray == null || secondArray == null)
             return new T[0,0];
@@ -140,7 +140,7 @@ public class ExcelTools
     }
 
     //Function that merges an array in parallel of a two dimensional array at the end of the 2nd dimension
-    public T[,] mergeArraysParallel(T[,] firstArray, T[] secondArray)
+    public T[,] mergeArraysParallel<T>(T[,] firstArray, T[] secondArray)
     {
         if (firstArray == null || secondArray == null)
             return new T[0, 0];
