@@ -7,6 +7,7 @@ namespace JExcelExtension;
 //This class is purely for code that used ExcelFunctions before version 1.018 so that only the initialized class needs to be renamed and
 //everything thereafter should work as normal. All code here will no longer be updated and is therefore deprecated. It is recommended to
 //use the normal ExcelFunctions as its should be more efficient, flexible and isn't locked to strings for data.
+
 public class LegacyFunctions
 {
     //Resources for use in class

@@ -114,6 +114,62 @@ public class ExcelTools
         return result;
     }
 
+    //Function that merges two arrays in parallel into a two dimensional array
+    public T[,] mergeArraysParallel(T[] firstArray, T[] secondArray)
+    {
+        if(firstArray == null || secondArray == null)
+            return new T[0,0];
+
+        int length = firstArray.Length;
+
+        if(secondArray.Length >= length)
+            length = secondArray.Length;
+
+        T[,] result = new T[length, 2];
+
+        for (int i = 0; i < length; i++)
+        {
+            if(i < firstArray.Length)
+                result[i, 0] = firstArray[i];
+
+            if(i < secondArray.Length)
+                result[i, 1] = secondArray[i];
+        }
+
+        return result;
+    }
+
+    //Function that merges an array in parallel of a two dimensional array at the end of the 2nd dimension
+    public T[,] mergeArraysParallel(T[,] firstArray, T[] secondArray)
+    {
+        if (firstArray == null || secondArray == null)
+            return new T[0, 0];
+
+        int firstLength = firstArray.GetLength(0);
+        int secondLength = firstArray.GetLength(1);
+
+        if (secondArray.Length >= firstLength)
+            firstLength = secondArray.Length;
+
+        T[,] result = new T[firstLength, 2];
+        for (int l = 0; l < secondLength; l++)
+        {
+            for (int i = 0; i < firstLength; i++)
+            {
+                if (i < firstArray.GetLength(0))
+                    result[i, l] = firstArray[i, l];
+            }
+        }
+
+        for(int i = 0; i < firstLength; i++)
+        {
+            if (i < secondArray.Length)
+                result[i, secondLength] = secondArray[i];
+        }
+
+        return result;
+    }
+
     //Splits a string array by splitting each string into multiple strings making the array longer via singular string
     public string[] splitArrayByString(string[] array, string splitBy)
     {

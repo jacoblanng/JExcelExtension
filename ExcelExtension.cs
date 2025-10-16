@@ -13,6 +13,8 @@ public static class ExcelExtension
     public static string[] splitArrayByString(this string[] array, string splitBy) => tool.splitArrayByString(array, splitBy);
     public static string[] splitArrayByChars(this string[] array, char[] splitBy) => tool.splitArrayByChars(array, splitBy);
     public static string[] mergeWith(this string[] mergeInto, string[] mergeWith, string spacing) => tool.mergeArrays(mergeInto, mergeWith, spacing);
+    public static T[,] mergeParallel(this T[] thisArray, T[] secondArray) => tool.mergeArraysParallel(thisArray, secondArray);
+    public static T[,] mergeParallel(this T[,] thisArray, T[] secondArray) => tool.mergeArraysParallel(thisArray, secondArray);
     public static string[] replaceString(this string[] array, string target, string newString) => tool.replaceString(array, target, newString);
     public static string[] replaceChar(this string[] array, char targetChar, char newChar) => tool.replaceChar(array, targetChar, newChar);
     public static T[,] toTypeColumn<T>(this T[] array) => tool.typesToColumnFormat(array);
